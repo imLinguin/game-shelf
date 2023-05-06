@@ -25,6 +25,7 @@ from .create_dialog import create_dialog
 from .game import Game
 from .save_cover import resize_cover, save_cover
 from .steamgriddb import SGDBSave
+from .gamesdb import GamesDBImport
 
 
 class Importer:
@@ -77,6 +78,7 @@ class Importer:
                 self.import_statuspage.set_title(_("Importing Covers…"))
                 self.update_progressbar()
                 SGDBSave(self.win, self.games, self)
+                GamesDBImport(self.win, self.games, self)
             else:
                 self.done()
 

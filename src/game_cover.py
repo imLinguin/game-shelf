@@ -24,8 +24,10 @@ from PIL import Image, ImageFilter, ImageStat
 class GameCover:
     pixbuf = None
     blurred = None
+    blurred_bg = None
     luminance = None
     path = None
+    bg_path = None
     animation = None
     anim_iter = None
 
@@ -33,9 +35,9 @@ class GameCover:
         "/hu/kramo/Cartridges/library_placeholder.svg", 400, 600, False
     )
 
-    def __init__(self, pictures, path=None):
+    def __init__(self, pictures, path=None, bg_path=None):
         self.pictures = pictures
-        self.new_cover(path)
+        self.new_cover(path, bg_path)
 
     # Wrap the function in another one as Gio.Task.run_in_thread does not allow for passing args
     def create_func(self, path):
@@ -47,12 +49,14 @@ class GameCover:
 
         return wrapper
 
-    def new_cover(self, path=None):
+    def new_cover(self, path=None, bg_path=None):
         self.animation = None
         self.pixbuf = None
         self.blurred = None
+        self.blurred_bg = None
         self.luminance = None
         self.path = path
+        self.bg_path = bg_path
 
         if path:
             if path.suffix == ".gif":
@@ -97,6 +101,30 @@ class GameCover:
                 self.luminance = (0.5, 0.5)
 
         return self.blurred
+
+    def get_blurred_bg(self):
+        if not self.blurred_bg:
+            if self.bg_path:
+                with Image.open(self.bg_path) as image:
+                    image = image.convert("RGB").filter(ImageFilter.GaussianBlur(20))
+
+                    tmp_path = Gio.File.new_tmp(None)[0].get_path()
+                    image.save(tmp_path, "tiff", compression=None)
+
+                    self.blurred_bg = GdkPixbuf.Pixbuf.new_from_file(tmp_path)
+
+                    stat = ImageStat.Stat(image.convert("L"))
+
+                    # Luminance values for light and dark mode
+                    self.luminance = (
+                        (stat.mean[0] + stat.extrema[0][0]) / 510,
+                        (stat.mean[0] + stat.extrema[0][1]) / 510,
+                    )
+            else:
+                self.luminance = (0.5, 0.5)
+                return self.get_blurred()
+
+        return self.blurred_bg
 
     def add_picture(self, picture):
         self.pictures.add(picture)

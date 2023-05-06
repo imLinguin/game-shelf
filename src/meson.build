@@ -31,6 +31,7 @@ cartridges_sources = [
   'importers/itch_importer.py',
   'utils/importer.py',
   'utils/steamgriddb.py',
+  'utils/gamesdb.py',
   'utils/save_cover.py',
   'utils/create_dialog.py',
   'utils/check_install.py'

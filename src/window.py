@@ -67,6 +67,7 @@ class CartridgesWindow(Adw.ApplicationWindow):
 
     games = {}
     game_covers = {}
+    game_backgrounds = {}
     toasts = {}
     active_game = None
     details_view_game_cover = None
@@ -95,6 +96,7 @@ class CartridgesWindow(Adw.ApplicationWindow):
 
         self.games_dir = self.data_dir / "cartridges" / "games"
         self.covers_dir = self.data_dir / "cartridges" / "covers"
+        self.backgrounds_dir = self.data_dir / "cartridges" / "backgrounds"
 
         self.schema = Gio.Settings.new("hu.kramo.Cartridges")
 
@@ -128,6 +130,7 @@ class CartridgesWindow(Adw.ApplicationWindow):
                     self.games_dir / f"{game_id}.json",
                     self.covers_dir / f"{game_id}.tiff",
                     self.covers_dir / f"{game_id}.gif",
+                    self.backgrounds_dir / f"{game_id}.tiff"
                 ):
                     path.unlink(missing_ok=True)
 
@@ -232,7 +235,7 @@ class CartridgesWindow(Adw.ApplicationWindow):
         self.details_view_game_cover.add_picture(self.details_view_cover)
 
         self.details_view_blurred_cover.set_pixbuf(
-            self.details_view_game_cover.get_blurred()
+            self.details_view_game_cover.get_blurred_bg()
         )
 
         self.details_view_title.set_label(game.name)

@@ -85,3 +85,27 @@ def save_cover(win, game_id, cover_path):
         win.game_covers[game_id].new_cover(
             animated_path if cover_path.suffix == ".gif" else static_path
         )
+
+
+def save_background(win, game_id, cover_path):
+    win.backgrounds_dir.mkdir(parents=True, exist_ok=True)
+
+    animated_path = win.backgrounds_dir / f"{game_id}.gif"
+    static_path = win.backgrounds_dir / f"{game_id}.tiff"
+
+    # Remove previous covers
+    animated_path.unlink(missing_ok=True)
+    static_path.unlink(missing_ok=True)
+
+    if not cover_path:
+        return
+
+    copyfile(
+        cover_path,
+        animated_path if cover_path.suffix == ".gif" else static_path,
+    )
+
+    if game_id in win.game_covers:
+        win.game_covers[game_id].new_cover(
+            animated_path if cover_path.suffix == ".gif" else static_path
+        )

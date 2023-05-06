@@ -103,7 +103,9 @@ class Game(Gtk.Box):
             self.game_cover = self.win.game_covers[self.game_id]
             self.game_cover.add_picture(self.cover)
         else:
-            self.game_cover = GameCover({self.cover}, self.get_cover_path())
+            self.game_cover = GameCover(
+                {self.cover}, self.get_cover_path(), self.get_background_path()
+            )
             self.win.game_covers[self.game_id] = self.game_cover
 
         if (
@@ -221,6 +223,17 @@ class Game(Gtk.Box):
             return cover_path
 
         cover_path = self.win.covers_dir / f"{self.game_id}.tiff"
+        if cover_path.is_file():
+            return cover_path
+
+        return None
+
+    def get_background_path(self):
+        cover_path = self.win.backgrounds_dir / f"{self.game_id}.gif"
+        if cover_path.is_file():
+            return cover_path
+
+        cover_path = self.win.backgrounds_dir / f"{self.game_id}.tiff"
         if cover_path.is_file():
             return cover_path
 
