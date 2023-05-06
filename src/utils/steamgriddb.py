@@ -101,6 +101,7 @@ class SGDBSave:
         task.return_value(game)
 
     def task_done(self, _task, result):
+        game = result.propagate_value()[-1]
         if self.importer:
             self.importer.queue -= 1
             self.importer.done()
@@ -114,9 +115,8 @@ class SGDBSave:
                     "open_preferences",
                     _("Preferences"),
                 ).connect("response", self.response)
-
-        game = result.propagate_value()[1]
-        game.set_loading(-1)
+        else:
+            game.set_loading(-1)
 
         if self.importer:
             game.save()

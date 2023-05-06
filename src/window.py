@@ -67,7 +67,6 @@ class CartridgesWindow(Adw.ApplicationWindow):
 
     games = {}
     game_covers = {}
-    game_backgrounds = {}
     toasts = {}
     active_game = None
     details_view_game_cover = None

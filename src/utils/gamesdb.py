@@ -39,6 +39,7 @@ class GamesDBImport:
         self.win = win
         self.importer = importer
         self.exception = None
+        self.session = requests.session()
 
         def create_func(game):
             def wrapper(task, *_args):
@@ -73,7 +74,7 @@ class GamesDBImport:
                 cover["url_format"].replace("{formatter}", "").replace("{ext}", "jpg")
             )
 
-            res = requests.get(cover_url)
+            res = self.session.get(cover_url)
             if res.ok:
                 tmp_cover = Gio.File.new_tmp()[0]
                 Path(tmp_cover.get_path()).write_bytes(res.content)
@@ -87,11 +88,11 @@ class GamesDBImport:
                 .replace("{formatter}", "")
                 .replace("{ext}", "jpg")
             )
-            res = requests.get(bg_url)
+            res = self.session.get(bg_url)
             if res.ok:
-                tmp_cover = Gio.File.new_tmp()[0]
-                Path(tmp_cover.get_path()).write_bytes(res.content)
-                save_background(self.win, game.game_id, Path(tmp_cover.get_path()))
+                tmp_bg = Gio.File.new_tmp()[0]
+                Path(tmp_bg.get_path()).write_bytes(res.content)
+                save_background(self.win, game.game_id, Path(tmp_bg.get_path()))
 
         task.return_value(game)
 
@@ -104,10 +105,9 @@ class GamesDBImport:
             return None
 
         try:
-            response = requests.get(
+            response = self.session.get(
                 f"https://gamesdb.gog.com/platforms/{platform}/external_releases/{title_id}"
             )
-            print(response, response.request.url)
             if response.ok:
                 return response
         except requests.exceptions.RequestException:
@@ -116,11 +116,14 @@ class GamesDBImport:
         return None
 
     def task_done(self, _task, result):
-        print("Done GamesDB", self.exception)
+        game = result.propagate_value()[-1]
+
         if self.importer:
             self.importer.queue -= 1
             self.importer.done()
             self.importer.gamesdb_exception = self.exception
+        else:
+            game.set_loading(-1)
 
         if self.exception and not self.importer:
             create_dialog(
@@ -131,8 +134,8 @@ class GamesDBImport:
                 _("Preferences"),
             ).connect("response", self.response)
 
-        game = result.propagate_value()[-1]
-        game.set_loading(-1)
+
+
         if self.importer:
             game.save()
         else:
