@@ -75,6 +75,9 @@ class PreferencesWindow(Adw.PreferencesWindow):
     sgdb_prefer_switch = Gtk.Template.Child()
     sgdb_animated_switch = Gtk.Template.Child()
 
+    gdb_enabled_switch = Gtk.Template.Child()
+    gdb_vertical_img_overwrite_switch = Gtk.Template.Child()
+
     removed_games = set()
 
     def __init__(self, win, **kwargs):
@@ -192,6 +195,8 @@ class PreferencesWindow(Adw.PreferencesWindow):
                 "sgdb",
                 "sgdb-prefer",
                 "sgdb-animated",
+                "gdb-enabled",
+                "gdb-vertical-img-overwrite",
             )
         )
 

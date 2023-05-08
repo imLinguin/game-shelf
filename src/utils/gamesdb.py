@@ -54,6 +54,10 @@ class GamesDBImport:
         if not self.importer:
             game.set_loading(1)
 
+        if not self.win.schema.get_boolean("gdb-enabled"):
+            task.return_value(game)
+            return
+
         try:
             gamesdb_data = self.get_gamesdb(game.source, game.game_id)
         except requests.exceptions.RequestException:
@@ -69,7 +73,7 @@ class GamesDBImport:
 
         cover = json_data["game"].get("vertical_cover")
         background = json_data["game"].get("background")
-        if cover:
+        if cover and self.win.schema.get_boolean("gdb-vertical-img-overwrite"):
             cover_url = (
                 cover["url_format"].replace("{formatter}", "").replace("{ext}", "jpg")
             )
@@ -133,8 +137,6 @@ class GamesDBImport:
                 "open_preferences",
                 _("Preferences"),
             ).connect("response", self.response)
-
-
 
         if self.importer:
             game.save()

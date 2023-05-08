@@ -263,4 +263,27 @@ template PreferencesWindow : Adw.PreferencesWindow {
       }
     }
   }
+
+  Adw.PreferencesPage gamesdb_page {
+    name: "gdb";
+    title: _("GOG GamesDB");
+    icon-name: "image-x-generic-symbolic";
+    Adw.PreferencesGroup {
+      title: _("Artworks");
+      Adw.ActionRow {
+        title: _("Enable GamesDB artworks");
+        activatable-widget: gdb_enabled_switch;
+        Switch gdb_enabled_switch {
+          valign: center;
+        }
+      }
+      Adw.ActionRow {
+        title: _("Overwrite vertical images");
+        activatable-widget: gdb_vertical_img_overwrite_switch;
+        Switch gdb_vertical_img_overwrite_switch{
+          valign: center;
+        }
+      }
+    }
+  }
 }

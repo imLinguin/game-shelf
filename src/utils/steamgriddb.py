@@ -27,7 +27,8 @@ class SGDBSave:
             Gio.Task.new(None, None, self.task_done).run_in_thread(create_func(game))
 
     def update_cover(self, task, game):
-        game.set_loading(1)
+        if not self.importer:
+            game.set_loading(1)
 
         if (
             not (

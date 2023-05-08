@@ -108,5 +108,5 @@ def save_background(win, game_id, cover_path):
     if game_id in win.game_covers:
         win.game_covers[game_id].new_cover(
             win.game_covers[game_id].path,
-            animated_path if cover_path.suffix == ".gif" else static_path
+            animated_path if cover_path.suffix == ".gif" else static_path,
         )

@@ -129,7 +129,7 @@ class CartridgesWindow(Adw.ApplicationWindow):
                     self.games_dir / f"{game_id}.json",
                     self.covers_dir / f"{game_id}.tiff",
                     self.covers_dir / f"{game_id}.gif",
-                    self.backgrounds_dir / f"{game_id}.tiff"
+                    self.backgrounds_dir / f"{game_id}.tiff",
                 ):
                     path.unlink(missing_ok=True)
 
